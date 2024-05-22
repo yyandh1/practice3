@@ -4,87 +4,100 @@
 #include <algorithm>
 #include <random>
 #include <unordered_set>
+#include <unordered_map>
+#include <vector>
+#include <numeric>
+#include <map>
+#include <cmath>
+#include <functional>
 
 using namespace std;
 
-void task1()//Двоичному коду делают стрижку
+void task1()
 {
-    // Создаем вектор, начинающийся с 1
-    vector<int> binary_code;
-    binary_code.push_back(1);
-    
-    // Заполняем вектор случайным количеством 1 и 0
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<> dis(0, 1);
-    
-    while (binary_code.size() < 5) {
-        binary_code.push_back(dis(gen));
-    }
-    
-    // Выводим вектор
-    cout << "Двоичный код: ";
-    for (int bit : binary_code) {
-        cout << bit;
-    }
-    cout << endl;
-    cout << "- Можно ли к вам прикасаться? ";
-    if (binary_code[0] == 1) {//первая цифра вектора
-        cout <<endl<< "- Да"<<endl<<"- Делаем как обычно? ";
-        if (binary_code[1] == 1) {//вторая цифра вектора
-            cout <<endl<< "- Да"<<endl<<"- Обожаю постоянность!"<<endl<<"- Мне итак идет)" ;
-        }
-        else {
-            cout <<endl<< "- Нет"<<endl<<"- Интересно, тогда может карэ? ";
-            if (binary_code[2] == 1) {//третья цифра вектора
-            cout << endl<<"- Да"<<endl<<"- Круто, давай попробуем" <<endl<<"- Уверен, мне пойдет" ;
-            }
-            else {
-                cout <<endl<< "- Нет"<<endl<<"- Хм, скоро лето, го налысо?" << endl;
-                if (binary_code[3] == 1) {//четвертая цифра вектора
-                cout <<endl<< "-Да"<<endl<<"- Ты будешь вылетый Вин Дизель!"<<endl<<"- Наконец-то!" ;
-                }
-                else {
-                    cout <<endl<< "- Нет"<<endl<<"- Слушай ты вообще, уверен, что хочешь стричься? А то тебе не угодишь! " << endl;
-                    if (binary_code[4] == 1) {//пятая цифра вектора
-                    cout <<endl<< "- Да"<<endl<<"- Тогда определись, что тебе нужно и приходи в следующий раз!"<<endl<<"- Ладненько, извини, пока...";
-                    }
-                    else {
-                    cout <<endl<< "- Нет"<<endl<<"- Ты только зря тратишь мое время! Выметайся! " << endl;
-                    }       
-            }
-            }
-        }
-    } else {
-        cout <<endl<< "- Нет"<<endl<<"- Тогда иди домой шутник!"<<endl<<"- Вот и пойду!" << endl;
-    }
-}
-void task2() // вывод палиндромов из массива
-{
-    vector<string> Polindrom = { "madam", "racecar", "level", "deified", "rotor", "civic", "kayak", "radar", "refer", "pop" };
-    vector<string> findPolindrom;
-    copy_if(Polindrom.begin(), Polindrom.end(), back_inserter(findPolindrom),[](const string& word)
-    {
-    string reversedWord = word;
-    reverse(reversedWord.begin(), reversedWord.end());
-    return word == reversedWord;
-    });
-    if (findPolindrom.empty()){
-        cout << "Не найдены палиндромы" << endl;
-        }
-        else{
-        cout << "Найдены следующие палиндромы:" << endl;
-            for (const auto& word : findPolindrom) {
-            cout << word << " ";
-            }
-        cout << endl;
+   int planned_profit = 450;
+
+    map<int, pair<int, int>> data = {{1, {500, 50}}, {2, {400, 60}}, {3, {700, 250}}, {4, {300, 100}}, {5, {450, 50}}};
+
+    vector<pair<int, int>> results;
+
+    for (const auto& days : data) {
+        int day = days.first;
+        int income = days.second.first;
+        int expenses = days.second.second;
+        int profit = income - expenses;
+
+        if (profit < planned_profit) {
+            results.push_back({day, planned_profit - profit});
         }
     }
 
-    int two_versions(int a, int b)
-    {
-    return b == 0 ? a : two_versions(b, a % b);
+    sort(results.begin(), results.end(), [](const pair<int, int>& a, const pair<int, int>& b) {
+        return a.second < b.second;
+    });
+
+    for (pair<int, int> result : results) {
+        cout << "День: " << result.first << ", Прибыль меньше плановой на: " << result.second << endl;
+    }
+}
+struct Student {
+    int number;
+    double stip;
+    double sr_ball;
+
+    // Конструктор для создания объектов Student
+    Student(int num, double i, double g) : number(num), stip(i), sr_ball(g) {}
+};
+
+// Функция для сравнения студентов на основе их дохода и успеваемости
+bool compareStudents(const Student& a, const Student& b) {
+    // Сначала сравниваем по доходу (меньший доход имеет приоритет)
+    if (a.stip != b.stip) {
+        return a.stip < b.stip;
+    }
+    // Если доходы равны, сравниваем по успеваемости (больший балл имеет приоритет)
+    return a.sr_ball > b.sr_ball;
+}
+
+void task2() 
+{
+        int n, z; // Количество заявлений и студентов, которым можно одобрить мат. помощь
+
+    cout << "Введите количество заявлений: ";
+    cin >> n;
+    cout << "Введите количество студентов, которым можно одобрить мат. помощь: ";
+    cin >> z;
+
+    srand(time(0));
+
+    // Создание вектора для хранения заявлений
+    vector<Student> students;
+
+    // Генерация случайных данных об оценках и доходах студентов и вывод списка студентов
+    cout << "\nДанные о всех студентах, их доходы и успеваемость:\n";
+    for (int i = 1; i <= n; ++i) {
+        double Sr_Ball2 = rand() % 20 + 30;
+        double Sr_Ball = Sr_Ball2 / 10.0;
+        int Stip = rand() % 15000 + 5100;
+        students.push_back(Student(i, Stip, Sr_Ball));
+        cout << "Студент " << i << ": Доход - " << Stip << ", Успеваемость - " << Sr_Ball << endl;
+    }
+
+    // Сортировка студентов по приоритету
+    sort(students.begin(), students.end(), compareStudents);
+
+    // Сортировка студентов, которым одобрили мат. помощь, по возрастанию номеров
+    sort(students.begin(), students.begin() + min(n, z), [](const Student& a, const Student& b) {
+        return a.number < b.number;
+        });
+
+    // Вывод списка студентов, которым одобрят мат. помощь (упорядоченных по возрастанию номеров)
+    cout << "\nСтуденты, которым одобрят мат. помощь (в порядке возрастания номеров):\n";
+    for (int i = 0; i < min(n, z); ++i) {
+        cout << "Студент " << students[i].number << endl;
+    }
 } 
+
 bool isAnagram(const string& s1, const string& s2) {
     if (s1.length() != s2.length()) return false;
     string a = s1, b = s2;
@@ -114,11 +127,23 @@ void task3()// функция, которая находит все анагра
 
 void task4()
 {
-    string input = "ThIS iS aN ExAmPlE Of A sEnTEnCE wItH rAnDoM cApItAlIzAtIoN aNd lOwErCaSe LeTtErS.";
-    cout << input << endl;
- int quantityCapitalLetters = count_if(input.begin(), input.end(),[](char k) {return (k >= 'A' && k <= 'Z'); });//количество заглавных
- cout <<"Кол-во заглавных букв = " << quantityCapitalLetters << endl;
+vector<int> class9a_scores = {75, 80, 95, 88, 76, 85, 92, 89, 90, 78};
+    vector<int> class9b_scores = {82, 91, 78, 84, 88, 95, 92, 79, 86, 85, 89, 90, 91, 87, 84};
+
+    int total_class9a = accumulate(class9a_scores.begin(), class9a_scores.end(), 0);
+    int total_class9b = accumulate(class9b_scores.begin(), class9b_scores.end(), 0);
+
+    if (total_class9a > total_class9b) {
+        cout << "9 А класс победил с " << total_class9a << " баллами";
+    } else if (total_class9b > total_class9a) {
+        cout << "9 Б класс победил с " << total_class9b << " баллами";
+    } else {
+        cout << "У классов одно и то же количество баллов, победила дружба";
+    }
+
+
 }
+
 bool throwDiceForSums(int sum1, int sum2, int sum3) {
     random_device rd;
     mt19937 gen(rd());
@@ -185,38 +210,124 @@ void task8(){
     cout << "Максимальный элемент: " << maxElement << endl;
     cout << "Сумма квадратов минимального и максимального элементов: " << sumOfSquares << endl;
 }
-void task9(){
-    // Количество клавиш на клавиатуре (примерное значение)
-    const int totalKeys = 104; // Примерное количество клавиш на стандартной клавиатуре без функциональных клавиш
+void task9(vector<vector<int>>& sudoku) {
+    // Инициализация вектора с пустым Судоку
+    sudoku = vector<vector<int>>(9, vector<int>(9, 0));
 
-    // Количество клавиш, которые могут залипать (W, A, S, D)
-    const int stuckKeys = 4;
+    // Заполняем первую строку случайными числами от 1 до 9
+    vector<int> numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    random_device rd;
+    mt19937 gen(rd());
+    shuffle(numbers.begin(), numbers.end(), gen);
+    copy(numbers.begin(), numbers.end(), sudoku[0].begin());
 
-    // Вероятность залипания каждой клавиши
-    double probabilityOfStuckKey = 1.0 / stuckKeys;
+    // Заполняем остальные строки, используя алгоритмы
+    for (int row = 1; row < 9; ++row) {
+        // Копируем элементы предыдущей строки
+        copy(sudoku[row - 1].begin(), sudoku[row - 1].end(), sudoku[row].begin());
 
-    // Выводим результат
-    cout << "Вероятность, что из всех клавиш на клавиатуре, залипнет W, A, S или D: " << probabilityOfStuckKey << endl;
+        // Смещаем элементы вправо на 1 позицию
+        rotate(sudoku[row].begin(), sudoku[row].begin() + 1, sudoku[row].end());
+    }
+
+    // Перемешиваем элементы в каждом столбце
+    for (int col = 0; col < 9; ++col) {
+        vector<int> columnElements(9);
+        transform(sudoku.begin(), sudoku.end(), columnElements.begin(), [col](const vector<int>& row) {
+            return row[col];
+        });
+        shuffle(columnElements.begin(), columnElements.end(), gen);
+        for (int row = 0; row < 9; ++row) {
+            sudoku[row][col] = columnElements[row];
+        }
+    }
+
+    // Перемешиваем элементы в каждом квадрате 3x3
+    for (int row = 0; row < 9; row += 3) {
+        for (int col = 0; col < 9; col += 3) {
+            vector<int> squareElements(9);
+            transform(sudoku.begin() + row, sudoku.begin() + row + 3, squareElements.begin(), [col](const vector<int>& row) {
+                return row[col] * 100 + row[col + 1] * 10 + row[col + 2];
+            });
+            shuffle(squareElements.begin(), squareElements.end(), gen);
+            for (int i = 0; i < 9; ++i) {
+                int value = squareElements[i];
+                sudoku[row + i / 3][col + i % 3] = value % 10;
+            }
+        }
+    }
 }
-void task10(){
-       // Предположим, что цена биткоина в долларах в 2010 была около $10
-    const double bitcoinPrice2010 = 0.5;
-    // Предположим, что цена биткоина в долларах в 2024 будет такой же, как в 2010
-    const double bitcoinPrice2024 = 66740.0;
 
-    // Количество долларов, которые мы можем потратить
-    const double dollarsAvailable = 10000.0;
+// Структура для хранения информации о продажах
+struct SalesData {
+    string product;
+    int quantity;
+    double price;
+};
 
-    // Количество биткоинов, которые мы можем купить в 2010
-    double bitcoinsBought2010 = dollarsAvailable / bitcoinPrice2010;
-    // Количество биткоинов, которые мы можем купить в 2024
-    double bitcoinsBought2024 = dollarsAvailable / bitcoinPrice2024;
+// Функция для вычисления общей выручки компании
+double calculateTotalRevenue(const vector<SalesData>& salesData) {
+    return accumulate(salesData.begin(), salesData.end(), 0.0, [](double total, const SalesData& sale) {
+        return total + sale.quantity * sale.price;
+    });
+}
 
-    // Выводим результаты
-    cout << "Количество биткоинов, которые можно было купить на 10000 долларов в 2010: " << bitcoinsBought2010 << endl;
-    cout << "Количество биткоинов, которые можно было купить на 10000 долларов в 2024: " << bitcoinsBought2024 << endl;
+// Функция для определения самого прибыльного продукта
+pair<string, double> findMostProfitableProduct(const vector<SalesData>& salesData) {
+    unordered_map<string, double> productProfits;
+    for (const auto& sale : salesData) {
+        productProfits[sale.product] += sale.quantity * sale.price;
+    }
+
+    auto mostProfitableProduct = max_element(productProfits.begin(), productProfits.end(), [](const auto& a, const auto& b) {
+        return a.second < b.second;
+    });
+
+    return *mostProfitableProduct;
+}
+
+// Функция для определения топ-3 самых продаваемых продуктов
+vector<pair<string, int>> findTopThreeProducts(const vector<SalesData>& salesData) {
+    unordered_map<string, int> productSales;
+    for (const auto& sale : salesData) {
+        productSales[sale.product] += sale.quantity;
+    }
+
+    vector<pair<string, int>> topProducts(productSales.begin(), productSales.end());
+    sort(topProducts.begin(), topProducts.end(), [](const auto& a, const auto& b) {
+        return a.second > b.second;
+    });
+
+    return {topProducts.begin(), topProducts.begin() + 3};
+}
+
+void task10() {
+    vector<SalesData> salesData = {
+        {"Сгущенка", 100, 10.0},
+        {"Кабачки", 50, 20.0},
+        {"Пряники", 75, 15.0},
+        {"Мороженое", 80, 10.0},
+        {"Хлеб", 60, 20.0},
+        {"Жвачка", 30, 25.0}
+    };
+
+    // Вычисление общей выручки
+    double totalRevenue = calculateTotalRevenue(salesData);
+    cout << "Общая выручка: " << totalRevenue << endl;
+
+    // Определение самого прибыльного продукта
+    auto mostProfitableProduct = findMostProfitableProduct(salesData);
+    cout << "Самый прибыльный продукт: " << mostProfitableProduct.first << ", прибыль: " << mostProfitableProduct.second << endl;
+
+    // Определение топ-3 самых продаваемых продуктов
+    auto topProducts = findTopThreeProducts(salesData);
+    cout << "Топ-3 самых продаваемых продукта:" << endl;
+    for (const auto& product : topProducts) {
+        cout << product.first << ": " << product.second << " шт." << endl;
+    }
 
 }
+
 int main() {
     system("chcp 65001");
 
@@ -245,7 +356,15 @@ int main() {
      task8();
 
      cout << "\n\nЗадание 9\n" << endl;
-     task9();
+     vector<vector<int>> sudoku;
+    task9(sudoku);
+    // Вывод сгенерированного Судоку
+    for (const auto& row : sudoku) {
+        for (int num : row) {
+            cout << num << " ";
+        }
+        cout << endl;
+    }
 
      cout << "\n\nЗадание 10\n" << endl;
      task10();
